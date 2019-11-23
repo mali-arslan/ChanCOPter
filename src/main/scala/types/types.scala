@@ -71,3 +71,7 @@ object Report {
 
   }
 }
+
+sealed trait Failure
+case class JsonFailure(error: String) extends Failure
+case class ArgumentError(error: String) extends Failure
