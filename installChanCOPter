@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+sbt pack
+cp ./target/pack/market.json ./
