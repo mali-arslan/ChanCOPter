@@ -1,36 +1,54 @@
 import types._
 
-import scala.io.Source
-import io.circe.parser._
 import io.circe.syntax._
 import cats.effect.IO
+import ChanCOPter._
+import cats.implicits._
+import cats.data.EitherT
 
+import scala.util.Try
 object Main extends App {
 
-  val program = for {
-    budget <- IO(args(0).toInt)
-    products <- getProducts("market.json")
-    sortedProducts = products.sorted
-    productsToBuy = pickProducts(sortedProducts, budget)
-    reportJson <- IO(Report(productsToBuy).asJson)
-  } yield reportJson
+  val exampleMarket =
+    """
+      |{
+      |  "products": [
+      |    {
+      |      "id": "00019DEPAC",
+      |      "name": "Basic",
+      |      "price": 699,
+      |      "channelIds": [
+      |        11245,
+      |        2024,
+      |        10231,
+      |        2025
+      |      ]
+      |    }
+      |  ]
+      |}
+    """.stripMargin
 
-  def getProducts(filePath: String): IO[List[Product]] = IO {
-    val marketJson = Source.fromFile(filePath).mkString
-
-    val maybeMarket = for {
-      json <- parse(marketJson)
-      market <- json.as[Market]
-    } yield market
-
-    maybeMarket match {
-      case Left(e)       => throw new IllegalStateException("Broken market: " + e)
-      case Right(market) => market.products
+  val getBudget =
+    EitherT {
+      IO {
+        Try { args(0).toInt }.toEither
+      }
     }
 
-  }
-  def pickProducts(products: List[Product], budget: Int): List[Product] =
-    products //???
+  val program = for {
+    products <- getProducts("market.json")
+    budget <- getBudget.leftMap(t => ArgumentError(t.getMessage)).leftWiden[Failure]
+    sortedProducts = products.sorted
+    productsToBuy = pickProducts(sortedProducts, budget)
+    reportJson = Report(productsToBuy).asJson
+  } yield reportJson
 
-  println(program.unsafeRunSync().spaces2)
+  program.value.unsafeRunSync() match {
+    case Right(report) => println(report.spaces2)
+    case Left(_: ArgumentError) =>
+      println("Invalid argument(s)\n Usage: ./ChanCOPter <budget in cents>")
+    case Left(_: JsonFailure) =>
+      println(
+        "Market JSON file is invalid. Please adhere to the following example: \n" + exampleMarket)
+  }
 }
