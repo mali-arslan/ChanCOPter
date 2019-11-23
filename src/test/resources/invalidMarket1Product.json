@@ -1,0 +1,15 @@
+{
+  "products": [
+    {
+      "id": "00019DEPAC",
+      "name": "Basic",
+      "price": 699,
+      "channelsIds": [
+        11245,
+        2024,
+        10231,
+        2025
+      ]
+    }
+  ]
+}

@@ -8,6 +8,7 @@ scalaVersion := "2.12.10"
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
 
+scalacOptions += "-Ypartial-unification"
 
 val circeVersion = "0.12.3"
 
@@ -17,8 +18,15 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
 
-libraryDependencies += "io.circe" %% "circe-generic-extras" %"0.12.2"
-libraryDependencies += "org.typelevel" %% "cats-effect" % "2.0.0"
+libraryDependencies += "io.circe"       %% "circe-generic-extras" % "0.12.2"
+libraryDependencies += "org.scalatest"  %% "scalatest"            % "3.0.3"
+
+val catsVersion = "2.0.0"
+
+libraryDependencies ++= Seq(
+  "org.typelevel"  %% "cats-core",
+  "org.typelevel"  %% "cats-effect"
+).map(_ % catsVersion)
 
 enablePlugins(PackPlugin)
 packMain:=Map("ChanCOPter" -> "Main")
