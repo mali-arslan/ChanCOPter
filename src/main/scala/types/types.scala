@@ -2,7 +2,10 @@ package types
 
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.JsonCodec
-import io.circe.generic.extras.semiauto.{deriveUnwrappedDecoder, deriveUnwrappedEncoder}
+import io.circe.generic.extras.semiauto.{
+  deriveUnwrappedDecoder,
+  deriveUnwrappedEncoder
+}
 
 @JsonCodec
 case class Market(products: List[Product])
@@ -18,8 +21,10 @@ object Product {
 }
 
 @JsonCodec(encodeOnly = true)
-case class ProductSummary private (id: ProductId, name: ProductName, price: Price)
-object ProductSummary{
+case class ProductSummary private (id: ProductId,
+                                   name: ProductName,
+                                   price: Price)
+object ProductSummary {
   def apply(p: Product): ProductSummary = ProductSummary(p.id, p.name, p.price)
 }
 
@@ -51,16 +56,18 @@ object ChannelId {
 case class Summary(totalChannels: Int,
                    totalUniqueChannels: Int,
                    totalPrice: Int,
-                   uniqueChannelIds: List[ChannelId],
-                   productsToBuy: List[ProductSummary])
+                   uniqueChannelIds: List[ChannelId])
 
-object Summary {
-  def apply(productsToBuy: List[Product]): Summary = {
+@JsonCodec(encodeOnly = true)
+case class Report(summary: Summary, productsToBuy: List[ProductSummary])
+object Report {
+  def apply(productsToBuy: List[Product]): Report = {
     val totalCh = productsToBuy.length
     val uniqueChannels = productsToBuy.flatMap(_.channelIds).distinct
     val totalPrice = productsToBuy.map(_.price.value).sum
 
-    Summary(totalCh, uniqueChannels.length, totalPrice, uniqueChannels, productsToBuy.map(ProductSummary(_)))
+    Report(Summary(totalCh, uniqueChannels.length, totalPrice, uniqueChannels),
+           productsToBuy.map(ProductSummary(_)))
 
   }
 }
