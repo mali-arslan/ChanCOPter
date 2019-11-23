@@ -19,3 +19,6 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "io.circe" %% "circe-generic-extras" %"0.12.2"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "2.0.0"
+
+enablePlugins(PackPlugin)
+packMain:=Map("ChanCOPter" -> "Main")
