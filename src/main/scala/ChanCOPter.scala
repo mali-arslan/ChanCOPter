@@ -6,24 +6,36 @@ import cats.implicits._
 
 import scala.annotation.tailrec
 import scala.io.Source
+import scala.util.Try
 
 object ChanCOPter {
 
   def getProducts(filePath: String): EitherT[IO, Failure, List[Product]] =
-    EitherT {
-      IO {
-        val marketJson = Source.fromFile(filePath).mkString
+    EitherT.fromEither[IO] {
+//      IO {
+//        val marketJson = Source.fromFile(filePath).mkString
+//
+//        val maybeMarket = for {
+//          json <- parse(marketJson)
+//          market <- json.as[Market]
+//        } yield market
+//
+//        maybeMarket
+//          .leftMap(e => JsonFailure(e.getMessage))
+//          .leftWiden[Failure]
+//          .map(_.products)
+//      }
 
-        val maybeMarket = for {
-          json <- parse(marketJson)
-          market <- json.as[Market]
-        } yield market
+      val maybeMarket = for {
+        marketJson <- Try(Source.fromFile(filePath).mkString).toEither
+        json <- parse(marketJson)
+        market <- json.as[Market]
+      } yield market
 
-        maybeMarket
-          .leftMap(e => JsonFailure(e.getMessage))
-          .leftWiden[Failure]
-          .map(_.products)
-      }
+      maybeMarket
+        .leftMap(e => JsonFailure(e.getMessage))
+        .leftWiden[Failure]
+        .map(_.products)
     }
   def pickProducts(products: List[Product], budget: Int): List[Product] = {
     @tailrec
@@ -35,9 +47,10 @@ object ChanCOPter {
             recursivePicker(tail, budgetLeft - head.price.value, head::pickedProducts)
           else
             recursivePicker(tail, budgetLeft, pickedProducts)
-        case Nil => Nil
+        case Nil => pickedProducts
       }
-    recursivePicker(products.sorted.reverse, budget, List())
+    // reverse to get the most valuable product first
+    recursivePicker(products.sorted.reverse, budget, List()).reverse
   }
 
 }

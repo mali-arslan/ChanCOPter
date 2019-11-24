@@ -47,7 +47,6 @@ class ChanCOPterTest
       Prop.forAll(Gen.listOfN(100, productGen), Gen.choose(500, 20000)) { (products, budget) =>
         val sortedProducts = products.sorted
         val pickedProducts = pickProducts(sortedProducts, budget)
-        val unpickedProducts = sortedProducts.filter(pickedProducts.contains(_))
         // don't exceed budget
         pickedProducts.map(_.price.value).sum <= budget &&
         // don't have duplicate products
@@ -62,8 +61,10 @@ class ChanCOPterTest
         val sortedProducts = products.sorted.reverse
         val pickedProducts = pickProducts(products, budget)
         // short circuit if nothing's picked
-        if (pickedProducts.isEmpty)
-          true
+        if (pickedProducts.isEmpty) {
+          // should pick something when possible
+          !sortedProducts.exists(_.price.value <= budget)
+        }
         else {
           val unpickedProducts = sortedProducts.filterNot(pickedProducts.contains(_))
           val budgetLeft = budget - pickedProducts.map(_.price.value).sum
@@ -81,7 +82,7 @@ class ChanCOPterTest
 }
 
 object ChanCOPterTest {
-  val productGen =
+  val productGen: Gen[Product] =
     for {
       id <- Gen.pick(12, ('0' to '9') ++ ('A' to 'Z'))
       name <- Gen.pick(5, 'a' to 'z')
