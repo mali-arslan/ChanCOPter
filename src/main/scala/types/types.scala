@@ -16,8 +16,15 @@ case class Product(id: ProductId,
                    price: Price,
                    channelIds: List[ChannelId])
 object Product {
-  implicit val ordering: Ordering[Product] = (a, b) =>
-    (a.channelIds.length / a.price.value * 1.0) compare (b.channelIds.length / b.price.value * 1.0)
+  implicit val ordering: Ordering[Product] = (a, b) => {
+    val aWorth = a.channelIds.length / a.price.value * 1.0
+    val bWorth = b.channelIds.length / b.price.value * 1.0
+    //tie-break based on max channels
+    if (aWorth == bWorth)
+      a.channelIds.length compare b.channelIds.length
+    else
+      aWorth compare bWorth
+  }
 }
 
 @JsonCodec(encodeOnly = true)
