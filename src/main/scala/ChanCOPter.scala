@@ -26,18 +26,18 @@ object ChanCOPter {
       }
     }
   def pickProducts(products: List[Product], budget: Int): List[Product] = {
-//    @tailrec
+    @tailrec
     def recursivePicker(productsLeftToPick: List[Product],
-                        budgetLeft: Int): List[Product] =
+                        budgetLeft: Int, pickedProducts: List[Product]): List[Product] =
       productsLeftToPick match {
         case head :: tail =>
           if (head.price.value <= budgetLeft)
-            head :: recursivePicker(tail, budgetLeft - head.price.value)
+            recursivePicker(tail, budgetLeft - head.price.value, head::pickedProducts)
           else
-            recursivePicker(tail, budgetLeft)
+            recursivePicker(tail, budgetLeft, pickedProducts)
         case Nil => Nil
       }
-    recursivePicker(products.sorted.reverse, budget)
+    recursivePicker(products.sorted.reverse, budget, List())
   }
 
 }
