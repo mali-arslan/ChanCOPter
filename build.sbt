@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "io.circe"       %% "circe-generic-extras" % "0.12.2"
 libraryDependencies += "org.scalatest"  %% "scalatest"            % "3.0.3"
-
+libraryDependencies += "org.scalacheck" %% "scalacheck"           % "1.14.0"
 val catsVersion = "2.0.0"
 
 libraryDependencies ++= Seq(
