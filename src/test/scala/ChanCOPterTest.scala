@@ -28,11 +28,25 @@ class ChanCOPterTest
       test.in(op.value.unsafeRunSync())(pos)
   }
 
-  "getProducts" should "get the list of products from valid json" inEitherTIO {
+  "getProducts" should "get the list of products from valid json with no products" inEitherTIO {
+    val path = getClass.getResource("/validMarket0Product.json").getPath
+    for {
+      list <- getProducts(path)
+    } yield list shouldBe empty
+  }
+
+  it should "get the list of products from valid json" inEitherTIO {
     val path = getClass.getResource("/validMarket1Product.json").getPath
     for {
       list <- getProducts(path)
-    } yield list should not be empty
+    } yield list.length shouldBe 1
+  }
+
+  it should "get the list of products from valid json with 2 products" inEitherTIO {
+    val path = getClass.getResource("/validMarket2Products.json").getPath
+    for {
+      list <- getProducts(path)
+    } yield list.length shouldBe 2
   }
 
   it should "return a Left when the file is invalid" inEitherTIO {
