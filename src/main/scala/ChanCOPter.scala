@@ -19,11 +19,6 @@ object ChanCOPter {
           market <- json.as[Market]
         } yield market
 
-        maybeMarket match {
-          case Left(e)       => JsonFailure(e.getMessage)
-          case Right(market) => market.products
-        }
-
         maybeMarket
           .leftMap(e => JsonFailure(e.getMessage))
           .leftWiden[Failure]
