@@ -71,7 +71,7 @@ class ChanCOPterTest
 
   it should "pick the most #chans/price products it can for the budget" in {
     check {
-      Prop.forAllNoShrink(Gen.listOfN(100, productGen), Gen.choose(500, 20000)) { (products, budget) =>
+      Prop.forAllNoShrink(Gen.listOfN(1000, productGen), Gen.choose(500, 20000)) { (products, budget) =>
         val sortedProducts = products.sorted.reverse
         val pickedProducts = pickProducts(products, budget)
         // short circuit if nothing's picked
