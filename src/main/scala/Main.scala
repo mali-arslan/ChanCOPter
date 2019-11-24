@@ -49,6 +49,6 @@ object Main extends App {
       println("Invalid argument(s)\n Usage: ./ChanCOPter <budget in cents>")
     case Left(_: JsonFailure) =>
       println(
-        "Market JSON file is invalid. Please adhere to the following example: \n" + exampleMarket)
+        "Market JSON file is not found or is invalid. Please make sure that market.json file is in the same directory as ChanCOPter and adheres to the following example: \n" + exampleMarket)
   }
 }
