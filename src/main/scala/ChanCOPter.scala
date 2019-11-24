@@ -12,20 +12,6 @@ object ChanCOPter {
 
   def getProducts(filePath: String): EitherT[IO, Failure, List[Product]] =
     EitherT.fromEither[IO] {
-//      IO {
-//        val marketJson = Source.fromFile(filePath).mkString
-//
-//        val maybeMarket = for {
-//          json <- parse(marketJson)
-//          market <- json.as[Market]
-//        } yield market
-//
-//        maybeMarket
-//          .leftMap(e => JsonFailure(e.getMessage))
-//          .leftWiden[Failure]
-//          .map(_.products)
-//      }
-
       val maybeMarket = for {
         marketJson <- Try(Source.fromFile(filePath).mkString).toEither
         json <- parse(marketJson)
