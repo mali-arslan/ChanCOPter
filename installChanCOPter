@@ -2,3 +2,4 @@
 
 sbt pack
 cp ./target/pack/market.json ./
+chmod +x ./ChanCOPter

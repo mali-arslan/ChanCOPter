@@ -1,7 +1,7 @@
 #ChanCOPter
 
 ## Usage
-Clone or download the repository and run:
+Clone or download the repository and inside the directory you cloned/downloaded into, run:
   
 `./installChanCOPter`
 
